@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% block title %}My Workout Sets{% endblock %}
+
+{% block head %}
+
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>My Workout Schedule</h2>
+        <a href="{% url 'workout_set_create' %}" class="btn btn-light">
+            <i class="fas fa-plus"></i> Add New Set
+        </a>
+    </div>
+
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+{% endif %}
+
+    {% regroup sets by day_of_week as workout_days %}
+    
+    <div class="row">
+        {% for day in workout_days %}
+        <div class="col-md-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header bg-black text-black">
+                    <h5 class="mb-0">{{ day.grouper }}</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Exercise</th>
+                                    <th>Sets × Reps</th>
+                                    <th>Weight (kg)</th>
+                                    <th>Notes</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for set in day.list %}
+                                <tr>
+                                    <td>{{ set.exercise_name }}</td>
+                                    <td>{{ set.sets }} × {{ set.reps }}</td>
+                                    <td>{{ set.weight }}kg</td>
+                                    <td>{{ set.notes|truncatechars:30 }}</td>
+                                    <td>
+                                        <div class="btn-group">
+                                            <a href="{% url 'workout_set_edit' set.pk %}" class="btn btn-sm btn-warning">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <a href="{% url 'workout_set_delete' set.pk %}" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="alert alert-info">
+                No workout sets recorded yet. Start by adding your first exercise!
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock head%}

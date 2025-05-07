@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block title %}
+Contact Us
+{% endblock title %}
+
+{% block head %}
+
+<!-- Contact Us Page -->
+<h1>Contact Us</h1>
+
+<style>
+    .contact-container {
+        background-color: rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 2rem;
+        color: white;
+        max-width: 800px;
+        margin: 3rem auto;
+    }
+
+    .contact-title {
+        text-align: center;
+        color: white;
+        margin-bottom: 2rem;
+    }
+
+    .contact-subtitle {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.8);
+        margin-bottom: 3rem;
+    }
+
+    .form-control {
+        background-color: rgba(0, 0, 0, 0.7) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white !important;
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .form-control:focus {
+        background-color: rgba(0, 0, 0, 0.8) !important;
+        border-color: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1);
+    }
+
+    .form-control::placeholder {
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .form-label {
+        color: white;
+        margin-bottom: 0.5rem;
+    }
+
+    textarea.form-control {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .btn-submit {
+        background-color: rgba(0, 0, 0, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.75rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .btn-submit:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .alert {
+        background-color: rgba(255, 255, 255, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+    }
+</style>
+
+
+<div class="container mt-2">
+
+    <div class="row">
+    
+    <div class="col-md-3"> </div>
+    
+    <div class="col-md-6">
+    
+    
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    {% endif %}
+    
+    <form action="/contact" method="post" autocomplete="off">{% csrf_token %}
+
+        <div class="form-group">
+        <input type="text" class="form-control" name="fullname" placeholder="Enter Your Name" required autocomplete="off">
+        </div>
+        
+        <div class="form-group">
+        <input type="email" class="form-control mt-2" name="email" placeholder="Enter Your Email" required autocomplete="off">
+        </div>
+        
+        <div class="form-group">
+        <input type="number" class="form-control mt-2" name="num" placeholder="Enter Your Number" required autocomplete="off">
+        </div>
+        
+        <div class="form-group">
+        <label for="desc" class="text">How can i help you?</label>
+        <textarea class="form-control mt-2" name="desc" cols="5" rows="3" id="desc" autocomplete="off"></textarea>
+        </div>
+        
+        <br>
+        <div class="d-grid gap-2">
+          <button class="btn btn-dark" type="submit">Submit</button>
+        </div>
+        
+    </form>
+    </div>
+    
+    <div class="col-md-3"></div>
+    
+    </div>
+    
+</div>
+
+{% endblock head %}

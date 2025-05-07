@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% block title %}{{ action }} Food Log{% endblock %}
+
+{% block head %}
+<style>
+    .food-container {
+        background-color: rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+    }
+    .section-header {
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 15px;
+        border-radius: 8px 8px 0 0;
+    }
+    .form-control, .form-select {
+        background-color: rgba(0, 0, 0, 0.7) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white !important;
+    }
+    .form-control:focus, .form-select:focus {
+        background-color: rgba(0, 0, 0, 0.8) !important;
+        border-color: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1);
+    }
+    .form-label {
+        color: white;
+    }
+    .form-select option {
+        background-color: rgba(0, 0, 0, 0.9);
+        color: white;
+    }
+    .log-form {
+        padding: 20px;
+    }
+</style>
+<div class="container mt-4">
+    <div class="food-container">
+        <div class="section-header">
+            <h4 class="mb-0">{{ action }} Food Log</h4>
+        </div>
+        <div class="p-3">
+            <form method="POST" class="log-form">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label class="form-label">Date</label>
+                    <input type="date" name="date" class="form-control" value="{{ form.date.value|date:'Y-m-d' }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Day of Week</label>
+                    <select name="day_of_week" class="form-select" required>
+                        <option value="">Select day...</option>
+                        <option value="Monday" {% if form.day_of_week.value == 'Monday' %}selected{% endif %}>Monday</option>
+                        <option value="Tuesday" {% if form.day_of_week.value == 'Tuesday' %}selected{% endif %}>Tuesday</option>
+                        <option value="Wednesday" {% if form.day_of_week.value == 'Wednesday' %}selected{% endif %}>Wednesday</option>
+                        <option value="Thursday" {% if form.day_of_week.value == 'Thursday' %}selected{% endif %}>Thursday</option>
+                        <option value="Friday" {% if form.day_of_week.value == 'Friday' %}selected{% endif %}>Friday</option>
+                        <option value="Saturday" {% if form.day_of_week.value == 'Saturday' %}selected{% endif %}>Saturday</option>
+                        <option value="Sunday" {% if form.day_of_week.value == 'Sunday' %}selected{% endif %}>Sunday</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Time</label>
+                    <input type="time" name="time" class="form-control" value="{{ form.time.value|time:'H:i' }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Calories</label>
+                    <input type="number" name="calories" class="form-control" value="{{ form.calories.value }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Proteins (g)</label>
+                    <input type="number" name="proteins" class="form-control" value="{{ form.proteins.value }}" required>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea name="description" class="form-control" rows="3">{{ form.description.value }}</textarea>
+                </div>
+                <div class="d-flex justify-content-between">
+                    <button type="submit" class="btn btn-dark">Save</button>
+                    <a href="{% url 'food_log_list' %}" class="btn btn-outline-light">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock head%}

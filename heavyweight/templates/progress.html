@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}My Progress{% endblock %}
+
+{% block head %}
+<style>
+    .progress-container {
+        background-color: rgba(0, 0, 0, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+    .exercise-header {
+        background-color: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 15px;
+        border-radius: 8px 8px 0 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .stats-container {
+        padding: 20px;
+        color: white;
+    }
+    .stat-item {
+        padding: 10px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .stat-item:last-child {
+        border-bottom: none;
+    }
+    .stat-label {
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.7);
+    }
+    .stat-value {
+        float: right;
+        font-weight: bold;
+    }
+</style>
+
+<div class="container mt-4">
+    <h2 class="text-white mb-4">My Progress</h2>
+
+    {% for exercise in exercises %}
+    <div class="progress-container">
+        <div class="exercise-header">
+            <h4 class="mb-0">{{ exercise }}</h4>
+        </div>
+        <div class="stats-container">
+            <div id="stats_{{ exercise|slugify }}">
+                <div class="stat-item">
+                    <span class="stat-label">Current Max:</span>
+                    <span class="stat-value" id="current_{{ exercise|slugify }}">Loading...</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">All-Time PR:</span>
+                    <span class="stat-value" id="pr_{{ exercise|slugify }}">Loading...</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">PRs This Month:</span>
+                    <span class="stat-value" id="prs_{{ exercise|slugify }}">Loading...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+const progressData = {{ progress_data|safe }};
+
+Object.entries(progressData).forEach(([exercise, data]) => {
+    const exerciseId = exercise.toLowerCase().replace(/\s+/g, '-');
+    const weights = data.weights;
+    const maxWeight = weights && weights.length > 0 ? Math.max(...weights) : 0;
+
+    // Update stats with safety checks
+    document.getElementById(`current_${exerciseId}`).textContent = 
+        maxWeight > 0 ? `${maxWeight}kg` : "No data";
+    document.getElementById(`pr_${exerciseId}`).textContent = 
+        data.all_time_max > 0 ? `${data.all_time_max}kg` : "No data";
+    document.getElementById(`prs_${exerciseId}`).textContent = 
+        data.prs && data.prs.length > 0 ? (data.prs[data.prs.length - 1] || 0) : 0;
+});
+</script>
+{% endblock %}

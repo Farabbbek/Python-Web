@@ -1,0 +1,185 @@
+{% extends 'base.html' %}
+{% block title %} Profile {% endblock title %}
+{% block head %}
+<style>
+    .profile-container {
+        background-color: rgba(0, 0, 0, 0.7);
+        border-radius: 8px;
+        padding: 2rem;
+        color: white;
+    }
+
+    .profile-picture {
+        width: 180px;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.2);
+        margin-bottom: 2rem;
+    }
+
+    .profile-info {
+        background-color: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .profile-info-item {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .profile-info-item:last-child {
+        border-bottom: none;
+    }
+
+    .form-control {
+        background-color: rgba(0, 0, 0, 0.7) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white !important;
+        padding: 0.75rem;
+    }
+
+    .form-control:focus {
+        background-color: rgba(0, 0, 0, 0.8) !important;
+        border-color: rgba(255, 255, 255, 0.3);
+        box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.1);
+    }
+
+    .form-label {
+        color: white;
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-form {
+        background-color: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 8px;
+        padding: 2rem;
+    }
+
+    .btn-update {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: white;
+        padding: 0.75rem;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .btn-update:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+
+    .alert {
+        background-color: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        color: white;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    h1 {
+        text-align: center;
+        color: white;
+        margin-top: 100px;
+    }
+</style>
+<h1>Profile</h1>
+<div class="container-fluid mt-5">
+    <div class="row">
+      <!-- Left Column: Profile Information (Card) -->
+      <div class="col-lg-6">
+        <div class="d-flex justify-content-center mb-4">
+            {% if profile.avatar %}
+            <img src="{{ profile.avatar.url }}" class="rounded-circle" style="width: 180px; height: 160px;object-fit: cover; margin-left: 150px; margin-right: 150px; margin-top: 145px;" alt="Profile Picture">
+        {% else %}
+            <img src="/media/default-avatar.png" class="rounded-circle" style="width: 180px; height: 150px; object-fit: cover; margin-left: 150px; margin-right: 150px; margin-top: 100px;color: black;" alt="Default Avatar">
+        {% endif %}
+        </div>
+        <div class="card" style="width: 75%; background: rgba(0, 0, 0, 0.5); color: black; margin-top: 150px;">
+          <!-- Profile Picture -->
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Email:</strong> {{ user.email }}</li>
+            <li class="list-group-item"><strong>Phone:</strong> {{ user.username }}</li>
+            <li class="list-group-item"><strong>First Name:</strong> {{ profile.first_name }}</li>
+            <li class="list-group-item"><strong>Last Name:</strong> {{ profile.last_name }}</li>
+            <li class="list-group-item"><strong>Bio:</strong> {{ profile.bio }}</li>
+          </ul>
+        </div>
+      </div>
+    <!-- Right Column: Profile Update Form -->
+    <div class="col-lg-6" style="background-color: rgba(0, 0, 0, 0.5); color: black;">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+    {% endif %}
+
+      {% if messages %}
+         <div class="alert alert-info" role="alert">
+            {% for message in messages %}
+                 {{ message }}
+                     {% endfor %}
+                    </div>
+                    {% endif %}                                          
+
+      <!-- Profile Form -->
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Profile Picture -->
+        <div class="form-group">
+          <label for="avatar" class="text-white">Profile Picture</label>
+          <input type="file" class="form-control" name="avatar" id="avatar">
+        </div>
+
+        <!-- First Name -->
+        <div class="form-group">
+          <label for="first_name" class="text-white">First Name</label>
+          <input type="text" class="form-control" name="first_name" value="{{ profile.first_name }}" required>
+        </div>
+
+        <!-- Last Name -->
+        <div class="form-group">
+          <label for="last_name" class="text-white">Last Name</label>
+          <input type="text" class="form-control" name="last_name" value="{{ profile.last_name }}" required>
+        </div>
+
+        <!-- Phone Number -->
+        <div class="form-group">
+          <label for="phone" class="text-white">Phone</label>
+          <input type="text" class="form-control" name="phone" value="{{ user.username }}" required>
+        </div>
+
+        <!-- Email (Read-Only) -->
+        <div class="form-group">
+          <label for="email" class="text-white">Email</label>
+          <input type="email" class="form-control" name="email" value="{{ user.email }}" required>
+        </div>
+
+        <!-- Bio -->
+        <div class="form-group">
+          <label for="bio" class="text-white">Bio</label>
+          <textarea class="form-control" name="bio" rows="3" required>{{ profile.bio }}</textarea>
+        </div>
+
+        <!-- Submit Button -->
+        <br />
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-dark">Update Profile</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock head %}
